@@ -1,3 +1,4 @@
+import 'package:chat_app/Cubits/chat_cubit/chat_cubit.dart';
 import 'package:chat_app/Cubits/login_cubit/login_cubit.dart';
 import 'package:chat_app/Helpers/show_snack_bar.dart';
 import 'package:chat_app/Screens/chat_screen.dart';
@@ -27,7 +28,8 @@ class LoginScreen extends StatelessWidget {
         if (state is LoginLoading) {
           isLoading = true;
         } else if (state is LoginSuccess) {
-          Navigator.pushNamed(context, ChatScreen.id , arguments: email);
+          BlocProvider.of<ChatCubit>(context).getMessage();
+          Navigator.pushNamed(context, ChatScreen.id, arguments: email);
           isLoading = false;
         } else if (state is LoginFailure) {
           showSnackBar(context, state.errMessage);
@@ -143,7 +145,7 @@ class LoginScreen extends StatelessWidget {
     );
   }
 
-   Future<void> loginUser() async {
+  Future<void> loginUser() async {
     UserCredential user = await FirebaseAuth.instance
         .createUserWithEmailAndPassword(email: email!, password: password!);
   }
