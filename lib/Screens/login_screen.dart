@@ -1,5 +1,5 @@
+import 'package:chat_app/Blocs/auth_bloc/auth_bloc.dart';
 import 'package:chat_app/Cubits/chat_cubit/chat_cubit.dart';
-import 'package:chat_app/Cubits/login_cubit/login_cubit.dart';
 import 'package:chat_app/Helpers/show_snack_bar.dart';
 import 'package:chat_app/Screens/chat_screen.dart';
 import 'package:chat_app/Screens/resgister_screen.dart';
@@ -23,7 +23,7 @@ class LoginScreen extends StatelessWidget {
   LoginScreen({super.key});
   @override
   Widget build(BuildContext context) {
-    return BlocListener<LoginCubit, LoginState>(
+    return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is LoginLoading) {
           isLoading = true;
@@ -105,8 +105,8 @@ class LoginScreen extends StatelessWidget {
                   CustomButton(
                     onTap: () async {
                       if (formKey.currentState!.validate()) {
-                        BlocProvider.of<LoginCubit>(context)
-                            .loginUser(email: email!, password: password!);
+                        BlocProvider.of<AuthBloc>(context)
+                            .add(LoginEvent(email: email!, password: password!));
                       } else {}
                     },
                     text: 'LOGIN',
@@ -147,6 +147,6 @@ class LoginScreen extends StatelessWidget {
 
   Future<void> loginUser() async {
     UserCredential user = await FirebaseAuth.instance
-        .createUserWithEmailAndPassword(email: email!, password: password!);
+        .signInWithEmailAndPassword(email: email!, password: password!);
   }
 }

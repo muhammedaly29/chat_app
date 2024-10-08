@@ -1,6 +1,5 @@
-import 'package:chat_app/Cubits/register_cubit/register_cubit.dart';
+import 'package:chat_app/Blocs/auth_bloc/auth_bloc.dart';
 import 'package:chat_app/Helpers/show_snack_bar.dart';
-import 'package:chat_app/Screens/chat_screen.dart';
 import 'package:chat_app/Widgets/custom_button.dart';
 import 'package:chat_app/Widgets/custom_text_field.dart';
 import 'package:chat_app/constants.dart';
@@ -8,6 +7,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
+
+import 'login_screen.dart';
 
 class RegisterScreen extends StatelessWidget {
   String? email;
@@ -24,12 +25,12 @@ class RegisterScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<RegisterCubit, RegisterState>(
+    return BlocConsumer<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is RegisterLoading) {
           isLoading = true;
         } else if (state is RegisterSuccess) {
-          Navigator.pushNamed(context, ChatScreen.id , arguments: email);
+          Navigator.pushNamed(context, LoginScreen.id, arguments: email);
           isLoading = false;
         } else if (state is RegisterFailure) {
           showSnackBar(context, state.errMessage);
@@ -105,8 +106,9 @@ class RegisterScreen extends StatelessWidget {
                     CustomButton(
                       onTap: () async {
                         if (formKey.currentState!.validate()) {
-                          BlocProvider.of<RegisterCubit>(context)
-                              .registerUser(email: email!, password: password!);
+                          BlocProvider.of<AuthBloc>(context).add(
+                            RegisterEvent(email: email!, password: password!),
+                          );
                         } else {}
                       },
                       text: 'REGISTER',
